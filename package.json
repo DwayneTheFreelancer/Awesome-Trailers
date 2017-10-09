@@ -1,0 +1,16 @@
+{
+  "name": "awesome-trailers",
+  "version": "1.0.0",
+  "description": "Movie trailer site",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dwayne Munro",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-core": "^0.1.3-alpha"
+  }
+}
