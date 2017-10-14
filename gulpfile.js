@@ -16,23 +16,20 @@ const browserSync = require('browser-sync').create();
 
 
 gulp.task("concatScripts", function() {
-    return gulp.src([""])
+    return gulp.src(["src/js/navbar.js"])
         .pipe(sourcemaps.init())
         .pipe(concat("app.js"))
-        .pipe(babel({
-            presets: ['env']
-        }))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest("src/js"));
 });
 
 gulp.task("minifyScripts", ["concatScripts"], function() {
-    return gulp.src("src/*.js")
+    return gulp.src("../src/js/app*.js")
         .pipe(sourcemaps.init())
         .pipe(uglify())
         .pipe(rename("app.min.js"))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest("build/js"))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest("build/js"));
 });
 
 gulp.task("compileSass", function() {
@@ -55,13 +52,13 @@ gulp.task("minifyCSS", function() {
 gulp.task("minifyHtml", function() {
     return gulp.src("/*.html")
         .pipe(htmlmin({collapseWhitespace: true}))
-        .pipe(gulp.dest('build'));
+        .pipe(gulp.dest('build/layouts'));
 });
 
-gulp.src("minifyImg", function() {
+gulp.task("minifyImg", function() {
     gulp.src("src/images/*")
         .pipe(imagemin())
-        .pipe(gulp.dest("build/images"));
+        .pipe(gulp.dest("images/build"));
 });
 
 gulp.task("watch", function() {
@@ -70,7 +67,8 @@ gulp.task("watch", function() {
 });
 
 gulp.task("clean", function() {
-    del(["build", "build/css/application.css", "js/app*.js"]);
+    //del(["build", "build/css/application.css*", "src/js/app*.js*"]);
+    del(["build", "css/application.css*", "../src/js/app*.js*"]);
 });
 
 gulp.task("build", ["minifyScripts", "compileSass", "minifyCSS", "minifyImg", "minifyHtml"], function() {
@@ -89,8 +87,8 @@ gulp.task("serve", function() {
 
     // add browserSync.reload to the tasks array to make
     // all browsers reload after tasks are complete.
-    gulp.watch('src/scss/**/*.scss', ["compileSass"]);
-    gulp.watch("src/js/**/*.js", ["concatScripts"]);
+    gulp.watch('src/scss/**/*.scss', ["compileSass"]).on("change", function() {browserSync.reload()});
+    gulp.watch("src/js/**/*.js", ["minifyScripts"]).on("change", function() {browserSync.reload()});
     gulp.watch("./**/*.html").on("change", function() {browserSync.reload()});
 });
 

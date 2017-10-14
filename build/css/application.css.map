@@ -1,0 +1,1 @@
+{"version":3,"sources":["navbar/navbar.scss"],"names":[],"mappings":"AAAA,cACI,UAAW,CACd","file":"application.css","sourcesContent":["#movie-search {\n    color: blue;\n}"]}
