@@ -103,5 +103,3 @@ function closeOutputValue(e) {
         }, 200);
     }
 }
-
-console.log("Hello World!");

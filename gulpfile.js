@@ -28,14 +28,14 @@ gulp.task("concatScripts", function() {
               }]
             ]
           }))
-        .pipe(gulp.dest("js"));
+        .pipe(gulp.dest("src/js"));
 });
 
-gulp.task("minifyScripts", function() {
-    return gulp.src("../js/app.js")
+gulp.task("minifyScripts", ["concatScripts"], function() {
+    return gulp.src("src/js/app.js")
         .pipe(uglify())
         .pipe(rename('app.min.js'))
-        .pipe(gulp.dest("js"));
+        .pipe(gulp.dest("build/js"));
 });
 
 gulp.task("compileSass", function() {
@@ -58,30 +58,24 @@ gulp.task("minifyCSS", function() {
 gulp.task("minifyHtml", function() {
     return gulp.src("/*.html")
         .pipe(htmlmin({collapseWhitespace: true}))
-        .pipe(gulp.dest('build/layouts'))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(gulp.dest('build'));
 });
 
 gulp.task("minifyImg", function() {
     gulp.src("src/images/*")
         .pipe(imagemin())
-        .pipe(gulp.dest("build"));
+        .pipe(gulp.dest("build/images"));
 });
-
-// gulp.task("watch", function() {
-//     return gulp.watch('src/scss/**/*.scss', ["compileSass"]),
-//            gulp.watch("src/js/**/*.js", ["concatScripts"]);
-// });
 
 gulp.task("clean", function() {
     //del(["build", "build/css/application.css*", "src/js/app*.js*"]);
     del(["build", "css/application.css*", "../src/js/app*.js*"]);
 });
 
-// gulp.task("build", ["minifyScripts", "compileSass", "minifyCSS", "minifyImg", "minifyHtml"], function() {
-//     return gulp.src(["css/application.css", "js/app.min.js", "index.html", "images/**"], { base: "./" })
-//         .pipe(gulp.dest("build"));
-// });
+gulp.task("build", ["minifyScripts", "compileSass", "minifyCSS", "minifyImg", "minifyHtml"], function() {
+    return gulp.src(["css/application.css", "js/app.min.js", "index.html", "images/**"], { base: "./" })
+        .pipe(gulp.dest("build"));
+});
 
 gulp.task("serve", function() {
     //console.log("Task running...");
@@ -99,8 +93,4 @@ gulp.task("serve", function() {
     gulp.watch("./**/*.html").on("change", function() {browserSync.reload()});
 });
 
-
-//gulp.task("default", ["concatScripts", "compileSass", "minifyCSS", "minifyImg", "minifyHtml" ,"serve"], function() {});
-gulp.task("default", function() {
-    console.log("The default task!!!");
-});
+gulp.task("default", ["build" ,"serve"], function() {});
