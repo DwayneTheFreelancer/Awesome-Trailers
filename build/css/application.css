@@ -1,2 +1,2 @@
-#movie-search{color:blue}
+#movie-search{color:blue;text-align:center;margin-top:15px}#movie-search button,#movie-search input[type=text]{height:25px}#find-movie{width:40%;margin-bottom:20px}#outputValue{height:400px}.output-details{list-style:none;font-weight:700;font-size:1.2em;width:45%}.output-details,.output-pic{display:inline-block;padding:0 20px}.output-left{position:relative}.closeButton{position:absolute;top:90%;left:1%}.output-left,.output-right{display:inline-block;height:250px;width:50%;vertical-align:top;padding:1.5em 1em;margin-right:-4px;height:400px}
 /*# sourceMappingURL=application.css.map */

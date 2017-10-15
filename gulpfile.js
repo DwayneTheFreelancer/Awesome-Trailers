@@ -13,23 +13,29 @@ const imagemin = require("gulp-imagemin");
 const watch = require("gulp-watch");
 const del = require("del");
 const browserSync = require('browser-sync').create();
+const pump = require("pump");
 
 
 gulp.task("concatScripts", function() {
     return gulp.src(["src/js/navbar.js"])
-        .pipe(sourcemaps.init())
         .pipe(concat("app.js"))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest("src/js"));
+        .pipe(babel({
+            "presets": [
+              ["env", {
+                "targets": {
+                  "browsers": ["last 2 versions", "safari >= 7"]
+                }
+              }]
+            ]
+          }))
+        .pipe(gulp.dest("js"));
 });
 
-gulp.task("minifyScripts", ["concatScripts"], function() {
-    return gulp.src("../src/js/app*.js")
-        .pipe(sourcemaps.init())
+gulp.task("minifyScripts", function() {
+    return gulp.src("../js/app.js")
         .pipe(uglify())
-        .pipe(rename("app.min.js"))
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest("build/js"));
+        .pipe(rename('app.min.js'))
+        .pipe(gulp.dest("js"));
 });
 
 gulp.task("compileSass", function() {
@@ -52,29 +58,30 @@ gulp.task("minifyCSS", function() {
 gulp.task("minifyHtml", function() {
     return gulp.src("/*.html")
         .pipe(htmlmin({collapseWhitespace: true}))
-        .pipe(gulp.dest('build/layouts'));
+        .pipe(gulp.dest('build/layouts'))
+        .pipe(browserSync.reload({stream: true}));
 });
 
 gulp.task("minifyImg", function() {
     gulp.src("src/images/*")
         .pipe(imagemin())
-        .pipe(gulp.dest("images/build"));
+        .pipe(gulp.dest("build"));
 });
 
-gulp.task("watch", function() {
-    return gulp.watch('src/scss/**/*.scss', ["compileSass"]),
-           gulp.watch("src/js/**/*.js", ["concatScripts"]);
-});
+// gulp.task("watch", function() {
+//     return gulp.watch('src/scss/**/*.scss', ["compileSass"]),
+//            gulp.watch("src/js/**/*.js", ["concatScripts"]);
+// });
 
 gulp.task("clean", function() {
     //del(["build", "build/css/application.css*", "src/js/app*.js*"]);
     del(["build", "css/application.css*", "../src/js/app*.js*"]);
 });
 
-gulp.task("build", ["minifyScripts", "compileSass", "minifyCSS", "minifyImg", "minifyHtml"], function() {
-    return gulp.src(["css/application.css", "js/app.min.js", "index.html", "images/**"], { base: "./" })
-        .pipe(gulp.dest("build"));
-});
+// gulp.task("build", ["minifyScripts", "compileSass", "minifyCSS", "minifyImg", "minifyHtml"], function() {
+//     return gulp.src(["css/application.css", "js/app.min.js", "index.html", "images/**"], { base: "./" })
+//         .pipe(gulp.dest("build"));
+// });
 
 gulp.task("serve", function() {
     //console.log("Task running...");
@@ -88,9 +95,12 @@ gulp.task("serve", function() {
     // add browserSync.reload to the tasks array to make
     // all browsers reload after tasks are complete.
     gulp.watch('src/scss/**/*.scss', ["compileSass"]).on("change", function() {browserSync.reload()});
-    gulp.watch("src/js/**/*.js", ["minifyScripts"]).on("change", function() {browserSync.reload()});
+    gulp.watch("src/js/**/*.js", ["concatScripts"]).on("change", function() {browserSync.reload()});
     gulp.watch("./**/*.html").on("change", function() {browserSync.reload()});
 });
 
 
-gulp.task("default", ["minifyScripts", "compileSass" ,"serve"], function() {});
+//gulp.task("default", ["concatScripts", "compileSass", "minifyCSS", "minifyImg", "minifyHtml" ,"serve"], function() {});
+gulp.task("default", function() {
+    console.log("The default task!!!");
+});
