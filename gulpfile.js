@@ -13,7 +13,6 @@ const imagemin = require("gulp-imagemin");
 const watch = require("gulp-watch");
 const del = require("del");
 const browserSync = require('browser-sync').create();
-const pump = require("pump");
 
 
 gulp.task("concatScripts", function() {
